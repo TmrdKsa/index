@@ -1,152 +1,187 @@
-import React, { useState } from 'react';
-import { ChevronDown, Shield, User, Store, MessageSquare, Search, EyeOff, Sparkles, Zap, Tag, Image, Circle, Shuffle } from 'lucide-react';
-
-const DiscordControlBot = () => {
-  const [openMenus, setOpenMenus] = useState({});
-
-  const toggleMenu = (menuId) => {
-    setOpenMenus(prev => ({
-      ...prev,
-      [menuId]: !prev[menuId]
-    }));
-  };
-
-  const menuSections = [
-    {
-      id: 'basic',
-      title: 'اضغط هنا للادارة',
-      items: [
-        { icon: <Shield className="w-5 h-5" />, title: 'Server', desc: 'سيرفرات المراقب، سيرفرات المجتمع' },
-        { icon: <User className="w-5 h-5" />, title: 'Avatar', desc: 'سيرفرات الإعلانات، سيرفرات الخيارات' },
-        { icon: <Store className="w-5 h-5" />, title: 'Store', desc: 'سيرفرات المتاجر، سيرفرات الخدمات' }
-      ]
-    },
-    {
-      id: 'messages',
-      title: 'اضغط هنا للبحث',
-      items: [
-        { icon: <MessageSquare className="w-5 h-5" />, title: 'Message', desc: 'ابحث عن آخر رسالة أرسلت من الشخص' },
-        { icon: <Shield className="w-5 h-5" />, title: 'Server', desc: 'عرض السيرفرات المشتركة بينك وبين الشخص' },
-        { icon: <Search className="w-5 h-5" />, title: 'Search', desc: 'البحث عن شخص داخل الروم المعروفة' },
-        { icon: <EyeOff className="w-5 h-5" />, title: 'Hidden Voice', desc: 'عرض جميع الرومات المخفي فيها سيرفر' }
-      ]
-    },
-    {
-      id: 'effects',
-      title: 'اضغط هنا للتعديل',
-      items: [
-        { icon: <User className="w-5 h-5" />, title: 'Profile', desc: 'عرض اطار وتار الشخص' },
-        { icon: <Shuffle className="w-5 h-5" />, title: 'Change', desc: 'تحويل الصورة من ملون إلى رمادي' },
-        { icon: <Image className="w-5 h-5" />, title: 'Blur', desc: 'تحنين على الصورة' },
-        { icon: <Circle className="w-5 h-5" />, title: 'Circle', desc: 'قص الصورة إلى شكل دائري' },
-        { icon: <Tag className="w-5 h-5" />, title: 'Sepia', desc: 'تحويل الصورة من ملون بني داكن' }
-      ]
-    },
-    {
-      id: 'register',
-      title: 'اضغط هنا للتسجيل',
-      items: []
-    },
-    {
-      id: 'premium',
-      title: 'اضغط هنا للتطوير',
-      items: [
-        { icon: <Sparkles className="w-5 h-5" />, title: 'Nitro', desc: 'لعرض معنوي تطوير خيارة النيترو' },
-        { icon: <Zap className="w-5 h-5" />, title: 'Boost', desc: 'لعرض معنوي تطوير خيارة البوست' }
-      ]
+html_code = """<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bārq Control</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(to bottom right, #111827, #1e3a8a, #6d28d9);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-  ];
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background-color: rgba(31, 41, 55, 0.7);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+    .header, .footer {
+      background-color: rgba(17, 24, 39, 0.8);
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.3);
+    }
+    .footer {
+      border-top: 1px solid rgba(59, 130, 246, 0.3);
+      border-bottom: none;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    .title {
+      font-size: 28px;
+      font-weight: 700;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .panel {
+      padding: 30px;
+    }
+    .panel h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 26px;
+    }
+    .icons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    .icon-box {
+      background-color: rgba(55, 65, 81, 0.5);
+      padding: 15px;
+      border-radius: 12px;
+      transition: background 0.3s;
+      cursor: pointer;
+    }
+    .icon-box:hover {
+      background-color: rgba(75, 85, 99, 0.5);
+    }
+    .menu-section {
+      background-color: rgba(17, 24, 39, 0.5);
+      border: 1px solid rgba(75, 85, 99, 0.4);
+      border-radius: 10px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .menu-header {
+      padding: 15px 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.3s;
+    }
+    .menu-header:hover {
+      background-color: rgba(55, 65, 81, 0.5);
+    }
+    .menu-items {
+      display: none;
+      border-top: 1px solid rgba(75, 85, 99, 0.4);
+    }
+    .menu-item {
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-bottom: 1px solid rgba(75, 85, 99, 0.3);
+    }
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+    .menu-item-icon {
+      background: linear-gradient(to bottom right, rgba(59,130,246,0.2), rgba(147,51,234,0.2));
+      padding: 10px;
+      border-radius: 8px;
+    }
+    .menu-item-text h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .menu-item-text p {
+      margin: 0;
+      font-size: 13px;
+      color: #9ca3af;
+    }
+    .rotate {
+      transform: rotate(180deg);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="title">
+        <span style="background:#2563eb;color:white;padding:4px 8px;border-radius:6px;font-size:12px;">edited</span>
+        <i class="fas fa-shield-alt"></i>
+        <span>Bārq Control</span>
+        <span style="background:#7e22ce;color:white;padding:4px 8px;border-radius:6px;font-size:12px;">APP</span>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>قائمة التحكم</h2>
+      <div class="icons">
+        <div class="icon-box"><i class="fas fa-tag" style="color:#60a5fa;font-size:24px;"></i></div>
+        <div class="icon-box"><i class="fas fa-shield-alt" style="color:#a78bfa;font-size:24px;"></i></div>
+        <div class="icon-box"><i class="fas fa-circle" style="color:#f472b6;font-size:24px;"></i></div>
+        <div class="icon-box"><i class="fas fa-bolt" style="color:#facc15;font-size:24px;"></i></div>
+        <div class="icon-box"><i class="fas fa-search" style="color:#4ade80;font-size:24px;"></i></div>
+      </div>
+      <p style="text-align:center;color:#d1d5db;">قم بالضغط على الزر المناسب</p>
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 p-4 flex items-center justify-center font-['Cairo',sans-serif]">
-      <div className="w-full max-w-2xl">
-        {/* Header */}
-        <div className="bg-gray-900/80 backdrop-blur-sm rounded-t-2xl p-6 border border-blue-500/30">
-          <div className="flex items-center gap-4">
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-4 rounded-xl">
-              <Shield className="w-10 h-10 text-white" />
-            </div>
-            <div className="flex-1 text-right">
-              <div className="flex items-center gap-2 justify-end mb-1">
-                <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded">edited</span>
-                <h1 className="text-2xl font-bold text-white">Bārq Control</h1>
-                <span className="text-xs bg-purple-600 text-white px-2 py-1 rounded">APP</span>
-              </div>
-            </div>
-          </div>
+      <div class="menu-section">
+        <div class="menu-header" onclick="toggleMenu('basic')">
+          <span>اضغط هنا للإدارة</span>
+          <i id="arrow-basic" class="fas fa-chevron-down"></i>
         </div>
-
-        {/* Control Panel */}
-        <div className="bg-gray-800/60 backdrop-blur-sm p-8 border-x border-blue-500/30">
-          <h2 className="text-4xl font-bold text-white text-center mb-8">قائمة التحكم</h2>
-          
-          {/* Icons Row */}
-          <div className="flex justify-center gap-6 mb-8">
-            <div className="bg-gray-700/50 p-4 rounded-xl hover:bg-gray-600/50 transition-all cursor-pointer">
-              <Tag className="w-10 h-10 text-blue-400" />
-            </div>
-            <div className="bg-gray-700/50 p-4 rounded-xl hover:bg-gray-600/50 transition-all cursor-pointer">
-              <Shield className="w-10 h-10 text-purple-400" />
-            </div>
-            <div className="bg-gray-700/50 p-4 rounded-xl hover:bg-gray-600/50 transition-all cursor-pointer">
-              <Circle className="w-10 h-10 text-pink-400" />
-            </div>
-            <div className="bg-gray-700/50 p-4 rounded-xl hover:bg-gray-600/50 transition-all cursor-pointer">
-              <Zap className="w-10 h-10 text-yellow-400" />
-            </div>
-            <div className="bg-gray-700/50 p-4 rounded-xl hover:bg-gray-600/50 transition-all cursor-pointer">
-              <Search className="w-10 h-10 text-green-400" />
-            </div>
+        <div id="menu-basic" class="menu-items">
+          <div class="menu-item">
+            <div class="menu-item-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="menu-item-text"><h3>Server</h3><p>سيرفرات المراقب، سيرفرات المجتمع</p></div>
           </div>
-
-          <p className="text-gray-300 text-center text-lg mb-6">قم بالضغط على الزر المناسب</p>
-
-          {/* Menu Sections */}
-          <div className="space-y-3">
-            {menuSections.map((section) => (
-              <div key={section.id} className="bg-gray-900/50 rounded-xl overflow-hidden border border-gray-700/50">
-                <button
-                  onClick={() => toggleMenu(section.id)}
-                  className="w-full flex items-center justify-between p-4 hover:bg-gray-700/30 transition-all"
-                >
-                  <ChevronDown 
-                    className={`w-5 h-5 text-gray-400 transition-transform ${openMenus[section.id] ? 'rotate-180' : ''}`}
-                  />
-                  <span className="text-gray-200 font-medium">{section.title}</span>
-                </button>
-
-                {openMenus[section.id] && section.items.length > 0 && (
-                  <div className="border-t border-gray-700/50">
-                    {section.items.map((item, idx) => (
-                      <div
-                        key={idx}
-                        className="flex items-center gap-4 p-4 hover:bg-gray-700/20 transition-all cursor-pointer border-b border-gray-700/30 last:border-b-0"
-                      >
-                        <div className="bg-gradient-to-br from-blue-500/20 to-purple-500/20 p-3 rounded-lg">
-                          {item.icon}
-                        </div>
-                        <div className="flex-1 text-right">
-                          <h3 className="text-white font-semibold mb-1">{item.title}</h3>
-                          <p className="text-gray-400 text-sm">{item.desc}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+          <div class="menu-item">
+            <div class="menu-item-icon"><i class="fas fa-user"></i></div>
+            <div class="menu-item-text"><h3>Avatar</h3><p>سيرفرات الإعلانات، سيرفرات الخيارات</p></div>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="bg-gray-900/80 backdrop-blur-sm rounded-b-2xl p-4 border border-blue-500/30 border-t-0">
-          <p className="text-gray-500 text-center text-sm">
-            You do not have permission to send messages in this channel.
-          </p>
+          <div class="menu-item">
+            <div class="menu-item-icon"><i class="fas fa-store"></i></div>
+            <div class="menu-item-text"><h3>Store</h3><p>سيرفرات المتاجر، سيرفرات الخدمات</p></div>
+          </div>
         </div>
       </div>
     </div>
-  );
-};
+    <div class="footer">
+      لا تملك صلاحية لإرسال الرسائل في هذه القناة.
+    </div>
+  </div>
 
-export default DiscordControlBot;
+  <script>
+    function toggleMenu(id) {
+      const menu = document.getElementById('menu-' + id);
+      const arrow = document.getElementById('arrow-' + id);
+      const isOpen = menu.style.display === 'block';
+      menu.style.display = isOpen ? 'none' : 'block';
+      arrow.classList.toggle('rotate', !isOpen);
+    }
+  </script>
+</body>
+</html>"""
+
+with open("/mnt/data/index.html", "w", encoding="utf-8") as f:
+    f.write(html_code)
+
+"/mnt/data/index.html"
